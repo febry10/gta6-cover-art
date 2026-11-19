@@ -3,21 +3,126 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cover Snap</title>
+<title>Vice Panels — GTA-Style Cover Art Maker</title>
+<meta name="description" content="An offline cover art maker: drop in your photos, pick a multi-panel poster layout and a neon sunset grade, add bold lettering, export a PNG.">
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-<main class="app">
-  <section class="controls">
-    <h1>Cover Snap</h1>
-    <p>A photo and a caption, made into a square cover.</p>
-    <label>Photo <input id="photo" type="file" accept="image/*"></label>
-    <label>Caption <input id="caption" type="text" maxlength="40" value="Sunset Heist"></label>
-    <button id="export" type="button">Export PNG 1080 x 1080</button>
-    <p id="status" role="status"></p>
-  </section>
-  <canvas id="cover" width="1080" height="1080" aria-label="The cover"></canvas>
-</main>
-<script type="module" src="./src/main.js"></script>
+<div class="app" id="app">
+  <aside class="controls">
+    <header class="brand">
+      <h1><span class="brand-neon">VICE</span> PANELS</h1>
+      <p class="tagline">Your photos, rebuilt as multi-panel cover art with a neon sunset grade and bold poster lettering. Fully offline — photos never leave this machine.</p>
+    </header>
+
+    <section class="step" aria-labelledby="step-photos-h">
+      <h2 id="step-photos-h"><span class="step-num">1</span> Photos</h2>
+      <div id="dropzone" class="dropzone" tabindex="0">
+        <p>Drop photos here, or
+          <label class="file-label">browse your files
+            <input id="photo-files" type="file" accept="image/*" multiple hidden>
+          </label>
+        </p>
+      </div>
+      <div class="samples">
+        <span>No photo handy? Start with a sample:</span>
+        <button type="button" class="chip" data-sample="pier">Pier Fisher</button>
+        <button type="button" class="chip" data-sample="boulevard">Boulevard Sunset</button>
+      </div>
+      <div id="photo-strip" class="photo-strip" aria-label="Loaded photos"></div>
+      <div class="row-actions">
+        <button type="button" id="fill-panels">Fill every panel</button>
+        <button type="button" id="clear-photos">Remove photos</button>
+      </div>
+      <p class="hint">Tip: click a photo below, then click a panel on the cover to place it there.</p>
+    </section>
+
+    <section class="step" aria-labelledby="step-layout-h">
+      <h2 id="step-layout-h"><span class="step-num">2</span> Panel layout</h2>
+      <div class="layout-grid" role="radiogroup" aria-label="Panel layout">
+        <button type="button" class="layout-btn is-active" data-layout="poster5" role="radio" aria-checked="true">
+          <svg viewBox="0 0 100 62" aria-hidden="true"><polygon points="0,0 46,0 44.5,32.2 0,36"/><polygon points="0,36 44.5,32.2 38,62 0,62"/><polygon points="46,0 100,0 100,18.6 43.5,22.3"/><polygon points="43.5,22.3 100,18.6 100,39.7 41,42.2"/><polygon points="41,42.2 100,39.7 100,62 38,62"/></svg>
+          <span>Poster Five</span>
+        </button>
+        <button type="button" class="layout-btn" data-layout="trio3" role="radio" aria-checked="false">
+          <svg viewBox="0 0 100 62" aria-hidden="true"><polygon points="0,0 58,0 50,62 0,62"/><polygon points="58,0 100,0 100,32.2 53.5,36"/><polygon points="53.5,36 100,32.2 100,62 50,62"/></svg>
+          <span>Trio</span>
+        </button>
+        <button type="button" class="layout-btn" data-layout="quad4" role="radio" aria-checked="false">
+          <svg viewBox="0 0 100 62" aria-hidden="true"><polygon points="0,0 52,0 48,28.5 0,32.2"/><polygon points="52,0 100,0 100,33.5 48,28.5"/><polygon points="0,32.2 48,28.5 44,62 0,62"/><polygon points="48,28.5 100,33.5 100,62 44,62"/></svg>
+          <span>Quad</span>
+        </button>
+        <button type="button" class="layout-btn" data-layout="hero1" role="radio" aria-checked="false">
+          <svg viewBox="0 0 100 62" aria-hidden="true"><polygon points="0,0 100,0 100,62 0,62"/></svg>
+          <span>Solo Hero</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="step" aria-labelledby="step-grade-h">
+      <h2 id="step-grade-h"><span class="step-num">3</span> Colour grade</h2>
+      <div class="grade-grid" role="radiogroup" aria-label="Colour grade">
+        <button type="button" class="grade-btn is-active" data-grade="leonida" role="radio" aria-checked="true"><span class="swatch swatch-leonida"></span>Leonida Sunset</button>
+        <button type="button" class="grade-btn" data-grade="neon" role="radio" aria-checked="false"><span class="swatch swatch-neon"></span>Neon Nights</button>
+        <button type="button" class="grade-btn" data-grade="golden" role="radio" aria-checked="false"><span class="swatch swatch-golden"></span>Golden Hour</button>
+        <button type="button" class="grade-btn" data-grade="noir" role="radio" aria-checked="false"><span class="swatch swatch-noir"></span>Midnight Noir</button>
+      </div>
+      <fieldset class="overlays">
+        <legend>Scenery overlays</legend>
+        <label><input type="checkbox" id="overlay-palms" checked> Palm silhouettes</label>
+        <label><input type="checkbox" id="overlay-skyline" checked> City skyline</label>
+        <label><input type="checkbox" id="overlay-sun" checked> Striped sun</label>
+        <label><input type="checkbox" id="overlay-birds"> Bird flock</label>
+      </fieldset>
+    </section>
+
+    <section class="step" aria-labelledby="step-words-h">
+      <h2 id="step-words-h"><span class="step-num">4</span> Lettering</h2>
+      <label class="field">Kicker — the small line
+        <input id="kicker" type="text" maxlength="30" value="WELCOME TO">
+      </label>
+      <label class="field">Title — the big line
+        <input id="title" type="text" maxlength="24" value="VICE CITY">
+      </label>
+      <label class="field">Numeral badge — optional, e.g. VI
+        <input id="badge" type="text" maxlength="6" value="VI">
+      </label>
+    </section>
+
+    <section class="step" aria-labelledby="step-export-h">
+      <h2 id="step-export-h"><span class="step-num">5</span> Export</h2>
+      <div class="size-grid" role="radiogroup" aria-label="Export size">
+        <button type="button" class="size-btn is-active" data-size="1920x1080" role="radio" aria-checked="true">1920 × 1080<br><small>Landscape post</small></button>
+        <button type="button" class="size-btn" data-size="1080x1080" role="radio" aria-checked="false">1080 × 1080<br><small>Square post</small></button>
+        <button type="button" class="size-btn" data-size="1080x1350" role="radio" aria-checked="false">1080 × 1350<br><small>Portrait post</small></button>
+        <button type="button" class="size-btn" data-size="1080x1920" role="radio" aria-checked="false">1080 × 1920<br><small>Story</small></button>
+      </div>
+      <button id="export-png" class="export-btn" type="button">Export PNG</button>
+      <p id="status" class="status" role="status"></p>
+    </section>
+  </aside>
+
+  <main class="stage">
+    <div class="canvas-wrap">
+      <canvas id="cover-canvas" width="1920" height="1080" aria-label="Live preview of your cover art"></canvas>
+    </div>
+    <section class="panel-editor" aria-labelledby="panel-editor-h">
+      <div class="panel-editor-head">
+        <h2 id="panel-editor-h">Selected panel: <span id="selected-panel-label">Panel 1</span></h2>
+        <span id="selected-panel-photo" class="panel-photo-name">No photo yet</span>
+      </div>
+      <label class="field zoom-field">Zoom
+        <input id="panel-zoom" type="range" min="1" max="3" step="0.01" value="1">
+      </label>
+      <div class="row-actions">
+        <button type="button" id="panel-swap">Swap with next panel</button>
+        <button type="button" id="panel-reset">Reset crop</button>
+        <button type="button" id="panel-clear">Clear photo</button>
+      </div>
+      <p class="hint">Drag on the cover to pan the selected panel's photo. Keys: <kbd>[</kbd> <kbd>]</kbd> choose panel, arrow keys pan, <kbd>+</kbd> / <kbd>−</kbd> zoom.</p>
+    </section>
+  </main>
+</div>
+<script type="module" src="./src/editor.js"></script>
 </body>
 </html>
