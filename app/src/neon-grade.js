@@ -7,14 +7,15 @@ export const GRADE_PRESETS = [
   {
     id: 'leonida',
     name: 'Leonida Sunset',
-    photoFilter: 'saturate(1.38) contrast(1.09) brightness(1.03)',
+    photoFilter: 'saturate(1.48) contrast(1.12) brightness(1.04)',
     base: '#2a1140',
     sky: ['#2e1a8f', '#b42a9e', '#ff5e62', '#ff9a3d', '#ffd23d'],
     sea: '#123a5e',
     silhouette: '#1c0b30',
     washes: [
-      { op: 'soft-light', alpha: 0.55, from: [0, 0], to: [0, 1], stops: [[0, '#4a1d9e'], [0.45, '#ff2e88'], [0.75, '#ff7a3d'], [1, '#3d0a4e']] },
-      { op: 'screen', alpha: 0.30, from: [0.15, 1], to: [0.9, 0.1], stops: [[0, '#ff2e88'], [0.55, '#ff9a3d'], [1, 'rgba(255, 210, 61, 0)']] },
+      { op: 'soft-light', alpha: 0.6, from: [0, 0], to: [0, 1], stops: [[0, '#4a1d9e'], [0.45, '#ff2e88'], [0.75, '#ff7a3d'], [1, '#3d0a4e']] },
+      { op: 'screen', alpha: 0.34, from: [0.15, 1], to: [0.9, 0.1], stops: [[0, '#ff2e88'], [0.55, '#ff9a3d'], [1, 'rgba(255, 210, 61, 0)']] },
+      { op: 'screen', alpha: 0.16, from: [0, 1], to: [0, 0.35], stops: [[0, '#ffd23d'], [1, 'rgba(255, 210, 61, 0)']] },
       { op: 'multiply', alpha: 0.22, from: [0, 0], to: [0, 0.4], stops: [[0, '#1a0b38'], [1, 'rgba(26, 11, 56, 0)']] },
     ],
     sunCore: '#ffe9a8', sunRim: '#ff7a3d',
@@ -24,7 +25,7 @@ export const GRADE_PRESETS = [
   {
     id: 'neon',
     name: 'Neon Nights',
-    photoFilter: 'saturate(1.5) contrast(1.16) brightness(0.98)',
+    photoFilter: 'saturate(1.62) contrast(1.2) brightness(0.99)',
     base: '#04060f',
     sky: ['#02030c', '#0a2a6e', '#7a1fa2', '#ff2ee6', '#19e3d2'],
     sea: '#06283d',

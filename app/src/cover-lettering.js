@@ -87,21 +87,28 @@ export function drawCoverLettering(ctx, width, height, words, grade) {
   const titleBaseline = height * (hasBadge ? 0.315 : 0.27);
 
   if (hasBadge) {
-    const badgeSize = fitLetteringSize(ctx, badge, width * 0.55, Math.min(height * 0.34, width * 0.44), 0.02);
+    const badgeSize = fitLetteringSize(ctx, badge, width * 0.58, Math.min(height * 0.43, width * 0.5), 0.02);
     ctx.save();
     ctx.translate(width / 2, 0);
     ctx.scale(CONDENSE, 1);
     setLetteringFont(ctx, badgeSize);
     ctx.lineJoin = 'round';
-    const badgeBaseline = height * 0.345;
+    const badgeBaseline = height * 0.42;
     ctx.strokeStyle = '#0a0512';
-    ctx.lineWidth = badgeSize * 0.14;
+    ctx.lineWidth = badgeSize * 0.15;
     drawTrackedText(ctx, badge, 0, badgeBaseline, badgeSize * 0.02, 'stroke');
     const gradient = ctx.createLinearGradient(0, badgeBaseline - badgeSize, 0, badgeBaseline);
-    gradient.addColorStop(0, grade.letterMid);
+    gradient.addColorStop(0, grade.letterTop);
+    gradient.addColorStop(0.45, grade.letterMid);
     gradient.addColorStop(1, grade.letterLow);
     ctx.fillStyle = gradient;
+    ctx.shadowColor = 'rgba(5, 2, 12, 0.55)';
+    ctx.shadowBlur = badgeSize * 0.05;
+    ctx.shadowOffsetY = badgeSize * 0.02;
     drawTrackedText(ctx, badge, 0, badgeBaseline, badgeSize * 0.02, 'fill');
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
     ctx.lineWidth = Math.max(1.2, badgeSize * 0.02);
     drawTrackedText(ctx, badge, 0, badgeBaseline, badgeSize * 0.02, 'stroke');
@@ -109,11 +116,11 @@ export function drawCoverLettering(ctx, width, height, words, grade) {
   }
 
   if (title) {
-    const titleSize = fitLetteringSize(ctx, title, width * 0.94, height * 0.165, 0.012);
+    const titleSize = fitLetteringSize(ctx, title, width * 0.94, height * 0.185, 0.012);
     drawDressedWord(ctx, title, width / 2, titleBaseline, titleSize, 0.012, grade);
     if (kicker) {
       const kickerSize = fitLetteringSize(ctx, kicker, width * 0.8, height * 0.037, 0.34);
-      drawDressedWord(ctx, kicker, width / 2, titleBaseline - titleSize * 1.12, kickerSize, 0.34, grade);
+      drawDressedWord(ctx, kicker, width / 2, titleBaseline - titleSize * 1.22, kickerSize, 0.34, grade);
     }
   } else if (kicker) {
     const kickerSize = fitLetteringSize(ctx, kicker, width * 0.8, height * 0.05, 0.34);

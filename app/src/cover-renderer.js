@@ -42,20 +42,45 @@ function paintPanelPhoto(ctx, width, height, polygon, crop, photo, grade) {
   ctx.restore();
 }
 
-/** Strokes every panel edge in white, plus the frame around the whole cover: the poster's keylines. */
+/** Strokes every panel edge in white over a wider black under-stroke, plus the frame: the poster's keylines. */
 function paintKeylines(ctx, width, height, layout) {
-  const lineWidth = Math.min(16, Math.max(5, width * 0.0078));
+  const lineWidth = Math.min(20, Math.max(6, width * 0.0095));
   ctx.save();
-  ctx.strokeStyle = '#ffffff';
-  ctx.lineWidth = lineWidth;
   ctx.lineJoin = 'round';
+  // Black under-stroke first, so every white keyline sits in a dark groove like the printed key art.
+  ctx.strokeStyle = '#0a0512';
+  ctx.lineWidth = lineWidth * 1.85;
   for (const polygon of layout.panels) {
     tracePanelPath(ctx, polygon, width, height);
     ctx.stroke();
   }
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = lineWidth;
+  for (const polygon of layout.panels) {
+    tracePanelPath(ctx, polygon, width, height);
+    ctx.stroke();
+  }
+  ctx.strokeStyle = '#0a0512';
+  ctx.lineWidth = lineWidth * 1.85;
+  ctx.strokeRect(lineWidth * 0.9, lineWidth * 0.9, width - lineWidth * 1.8, height - lineWidth * 1.8);
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = lineWidth;
   ctx.strokeRect(lineWidth / 2, lineWidth / 2, width - lineWidth, height - lineWidth);
   ctx.restore();
   return lineWidth;
+}
+
+/** A faint diagonal sheen sweeping the top-left of the cover, like light across a printed poster sleeve. */
+function paintSheen(ctx, width, height) {
+  const gradient = ctx.createLinearGradient(0, 0, width * 0.75, height * 0.9);
+  gradient.addColorStop(0, 'rgba(255, 255, 255, 0.13)');
+  gradient.addColorStop(0.35, 'rgba(255, 255, 255, 0.03)');
+  gradient.addColorStop(0.6, 'rgba(255, 255, 255, 0)');
+  ctx.save();
+  ctx.globalCompositeOperation = 'soft-light';
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, width, height);
+  ctx.restore();
 }
 
 /**
@@ -103,6 +128,7 @@ export function renderCoverArt(ctx, width, height, state, photosById, options = 
   if (state.overlays.palms) drawPalmClusters(ctx, width, height, grade);
   if (state.overlays.birds) drawBirdFlock(ctx, width, height, grade);
 
+  paintSheen(ctx, width, height);
   paintFilmGrain(ctx, width, height, grade);
   paintVignette(ctx, width, height, grade);
   drawCoverLettering(ctx, width, height, state, grade);

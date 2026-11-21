@@ -74,13 +74,26 @@ export function drawSkylineSilhouette(ctx, width, height, grade) {
   let x = -width * 0.01;
   const windows = [];
   while (x < width * 1.01) {
-    const bw = width * (0.028 + rand() * 0.042);
-    const bh = unit * (0.045 + rand() * 0.085);
+    const bw = width * (0.026 + rand() * 0.046);
+    const bh = unit * (0.05 + rand() * 0.13);
     ctx.fillRect(x, baseY - bh, bw, bh);
-    if (rand() > 0.55) ctx.fillRect(x + bw * 0.3, baseY - bh - unit * 0.016, bw * 0.4, unit * 0.016);
-    for (let wy = baseY - bh + unit * 0.014; wy < baseY - unit * 0.012; wy += unit * 0.02) {
-      for (let wx = x + bw * 0.16; wx < x + bw * 0.8; wx += bw * 0.22) {
-        if (rand() > 0.72) windows.push([wx, wy]);
+    const capRoll = rand();
+    if (capRoll > 0.78) {
+      // Antenna spire with a blinking-beacon dot, drawn later in window gold.
+      const ax = x + bw * 0.5;
+      ctx.fillRect(ax - Math.max(1, width * 0.0012), baseY - bh - unit * 0.045, Math.max(2, width * 0.0024), unit * 0.045);
+      windows.push([ax - Math.max(1.5, width * 0.0028), baseY - bh - unit * 0.052]);
+    } else if (capRoll > 0.5) {
+      ctx.fillRect(x + bw * 0.3, baseY - bh - unit * 0.016, bw * 0.4, unit * 0.016);
+    } else if (capRoll > 0.34) {
+      // Water-tower cap: a small trapezoid tank on legs.
+      ctx.fillRect(x + bw * 0.22, baseY - bh - unit * 0.03, bw * 0.56, unit * 0.026);
+      ctx.fillRect(x + bw * 0.34, baseY - bh - unit * 0.004, bw * 0.1, unit * 0.006);
+      ctx.fillRect(x + bw * 0.56, baseY - bh - unit * 0.004, bw * 0.1, unit * 0.006);
+    }
+    for (let wy = baseY - bh + unit * 0.014; wy < baseY - unit * 0.012; wy += unit * 0.019) {
+      for (let wx = x + bw * 0.16; wx < x + bw * 0.8; wx += bw * 0.2) {
+        if (rand() > 0.68) windows.push([wx, wy]);
       }
     }
     x += bw + width * (0.004 + rand() * 0.012);
@@ -95,6 +108,16 @@ export function drawSkylineSilhouette(ctx, width, height, grade) {
 /** The striped retro sun: a gradient disc with dark slices across its lower half, all clipped inside the disc. */
 export function drawStripedSun(ctx, cx, cy, radius, grade) {
   ctx.save();
+  // A warm halo first, so the sun glows against whatever panel it lands on.
+  const halo = ctx.createRadialGradient(cx, cy, radius * 0.4, cx, cy, radius * 2.3);
+  halo.addColorStop(0, grade.sunRim);
+  halo.addColorStop(1, 'rgba(0, 0, 0, 0)');
+  ctx.globalCompositeOperation = 'screen';
+  ctx.globalAlpha = 0.4;
+  ctx.fillStyle = halo;
+  ctx.fillRect(cx - radius * 2.3, cy - radius * 2.3, radius * 4.6, radius * 4.6);
+  ctx.globalAlpha = 1;
+  ctx.globalCompositeOperation = 'source-over';
   ctx.beginPath();
   ctx.arc(cx, cy, radius, 0, Math.PI * 2);
   ctx.clip();
@@ -114,18 +137,18 @@ export function drawStripedSun(ctx, cx, cy, radius, grade) {
   ctx.restore();
 }
 
-/** A loose flock of small birds across the upper sky. Seeded positions. */
+/** A loose flock of small birds clustered in the upper-left sky, clear of the lettering and faces. Seeded. */
 export function drawBirdFlock(ctx, width, height, grade) {
   const rand = seededRandom(61119);
   ctx.save();
   ctx.strokeStyle = grade.silhouette;
-  ctx.lineWidth = Math.max(1.6, height * 0.0035);
+  ctx.lineWidth = Math.max(1.4, height * 0.003);
   ctx.lineCap = 'round';
-  const birds = 9;
+  const birds = 7;
   for (let i = 0; i < birds; i++) {
-    const bx = width * (0.08 + rand() * 0.84);
-    const by = height * (0.06 + rand() * 0.22);
-    const s = height * (0.008 + rand() * 0.009);
+    const bx = width * (0.05 + rand() * 0.3);
+    const by = height * (0.05 + rand() * 0.11);
+    const s = height * (0.006 + rand() * 0.007);
     ctx.beginPath();
     ctx.moveTo(bx - s, by);
     ctx.quadraticCurveTo(bx - s * 0.4, by - s * 0.8, bx, by);

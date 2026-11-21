@@ -1,7 +1,8 @@
 // The multi-panel poster layouts. Each layout is a set of polygons in unit space (0..1 on both axes) that tile the
 // whole frame with slanted shared edges, in the genre's collage style. The renderer scales the polygons to whatever
 // export size is chosen, so one layout reflows across landscape, square, portrait and story covers: panels keep
-// their slant, photos re-crop inside them.
+// their slant, photos re-crop inside them. Key Art Six is the dramatic one: a two-panel hero stack on the left
+// (a portrait photo finally gets a tall frame) against four angled strips on the right, like the genre's key art.
 
 export const PANEL_LAYOUTS = [
   {
@@ -39,6 +40,18 @@ export const PANEL_LAYOUTS = [
     name: 'Solo Hero',
     panels: [
       [[0, 0], [1, 0], [1, 1], [0, 1]],
+    ],
+  },
+  {
+    id: 'keyart6',
+    name: 'Key Art Six',
+    panels: [
+      [[0, 0], [0.58, 0], [0.566, 0.42], [0, 0.5]],
+      [[0, 0.5], [0.566, 0.42], [0.545, 1], [0, 1]],
+      [[0.58, 0], [1, 0], [1, 0.36], [0.567, 0.4]],
+      [[0.567, 0.4], [1, 0.36], [1, 0.68], [0.556, 0.7]],
+      [[0.556, 0.7], [1, 0.68], [1, 0.85], [0.55, 0.86]],
+      [[0.55, 0.86], [1, 0.85], [1, 1], [0.545, 1]],
     ],
   },
 ];
